@@ -31,7 +31,7 @@ jobs:
     - name: Build example APK
       run: cd example && flutter build apk
       env:
-        SDK_REGISTRY_TOKEN = ${{ secrets.SDK_REGISTRY_ANDROID}}
+        SDK_REGISTRY_TOKEN: ${{ secrets.SDK_REGISTRY_ANDROID}}
 
   build-iOS:
     name: Build iOS package
