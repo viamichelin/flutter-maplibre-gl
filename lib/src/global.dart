@@ -133,5 +133,5 @@ Future<OfflineRegion> downloadOfflineRegion(
     });
   }
 
-  return OfflineRegion.fromMap(json.decode(await result));
+  return OfflineRegion.fromMap(json.decode(result));
 }
