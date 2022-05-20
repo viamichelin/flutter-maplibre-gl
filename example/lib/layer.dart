@@ -26,6 +26,8 @@ class LayerState extends State {
   @override
   Widget build(BuildContext context) {
     return MaplibreMap(
+      dragEnabled: false,
+      myLocationEnabled: true,
       onMapCreated: _onMapCreated,
       onMapClick: (point, latLong) =>
           print(point.toString() + latLong.toString()),
