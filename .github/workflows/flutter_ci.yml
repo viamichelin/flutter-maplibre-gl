@@ -97,7 +97,7 @@ jobs:
       - run: flutter pub get
       - name: downgrade cocapods
         run: |
-          sudo gem install cocoapods -v 1.11.2
+          sudo gem install cocoapods -v 1.11.1
           sudo gem uninstall cocoapods -v 1.11.3
       - name: Update pods
         working-directory: example/ios
