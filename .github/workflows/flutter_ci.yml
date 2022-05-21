@@ -95,6 +95,10 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
       - run: flutter pub get
+      - name: downgrade cocapods
+        run: |
+          sudo gem uninstall cocoapods
+          sudo gem install cocoapods -v 1.11.2
       - name: Update pods
         working-directory: example/ios
         run: pod update
