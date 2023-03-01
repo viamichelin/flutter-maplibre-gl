@@ -20,27 +20,6 @@ final LatLngBounds aucklandBounds = LatLngBounds(
   northeast: const LatLng(-36.82838, 174.79745),
 );
 
-final List<OfflineRegionDefinition> regionDefinitions = [
-  OfflineRegionDefinition(
-    bounds: hawaiiBounds,
-    minZoom: 3.0,
-    maxZoom: 8.0,
-    mapStyleUrl: "https://tegola.io/styles/hot-osm.json",
-  ),
-  OfflineRegionDefinition(
-    bounds: santiagoBounds,
-    minZoom: 10.0,
-    maxZoom: 16.0,
-    mapStyleUrl: "https://tegola.io/styles/hot-osm.json",
-  ),
-  OfflineRegionDefinition(
-    bounds: aucklandBounds,
-    minZoom: 13.0,
-    maxZoom: 16.0,
-    mapStyleUrl: "https://tegola.io/styles/hot-osm.json",
-  ),
-];
-
 final List<String> regionNames = ['Hawaii', 'Santiago', 'Auckland'];
 
 class OfflineRegionListItem {
@@ -73,30 +52,6 @@ class OfflineRegionListItem {
   bool get isDownloaded => downloadedId != null;
 }
 
-final List<OfflineRegionListItem> allRegions = [
-  OfflineRegionListItem(
-    offlineRegionDefinition: regionDefinitions[0],
-    downloadedId: null,
-    isDownloading: false,
-    name: regionNames[0],
-    estimatedTiles: 61,
-  ),
-  OfflineRegionListItem(
-    offlineRegionDefinition: regionDefinitions[1],
-    downloadedId: null,
-    isDownloading: false,
-    name: regionNames[1],
-    estimatedTiles: 3580,
-  ),
-  OfflineRegionListItem(
-    offlineRegionDefinition: regionDefinitions[2],
-    downloadedId: null,
-    isDownloading: false,
-    name: regionNames[2],
-    estimatedTiles: 202,
-  ),
-];
-
 class OfflineRegionsPage extends ExamplePage {
   OfflineRegionsPage() : super(const Icon(Icons.map), 'Offline Regions');
 
@@ -115,6 +70,7 @@ class OfflineRegionBody extends StatefulWidget {
 
 class _OfflineRegionsBodyState extends State<OfflineRegionBody> {
   List<OfflineRegionListItem> _items = [];
+  TextEditingController urlInputController = TextEditingController();
 
   @override
   void initState() {
@@ -124,10 +80,16 @@ class _OfflineRegionsBodyState extends State<OfflineRegionBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
       children: <Widget>[
+        //Textfield with hint indicating that an optional URL can be input
+        Text("Optional Style URL (app may crash with default URL):"),
+        TextField(
+            controller: urlInputController,
+            decoration: InputDecoration(hintText: "Optional Style URL")),
         ListView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+          shrinkWrap: true,
           itemCount: _items.length,
           itemBuilder: (context, index) => Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -178,6 +140,57 @@ class _OfflineRegionsBodyState extends State<OfflineRegionBody> {
       ],
     );
   }
+
+  List<OfflineRegionDefinition> get regionDefinitions => [
+        OfflineRegionDefinition(
+          bounds: hawaiiBounds,
+          minZoom: 3.0,
+          maxZoom: 8.0,
+          mapStyleUrl: urlInputController.text.isEmpty
+              ? "https://demotiles.maplibre.org/style.json"
+              : urlInputController.text,
+        ),
+        OfflineRegionDefinition(
+          bounds: santiagoBounds,
+          minZoom: 10.0,
+          maxZoom: 16.0,
+          mapStyleUrl: urlInputController.text.isEmpty
+              ? "https://demotiles.maplibre.org/style.json"
+              : urlInputController.text,
+        ),
+        OfflineRegionDefinition(
+          bounds: aucklandBounds,
+          minZoom: 13.0,
+          maxZoom: 16.0,
+          mapStyleUrl: urlInputController.text.isEmpty
+              ? "https://demotiles.maplibre.org/style.json"
+              : urlInputController.text,
+        ),
+      ];
+
+  List<OfflineRegionListItem> get allRegions => [
+        OfflineRegionListItem(
+          offlineRegionDefinition: regionDefinitions[0],
+          downloadedId: null,
+          isDownloading: false,
+          name: regionNames[0],
+          estimatedTiles: 61,
+        ),
+        OfflineRegionListItem(
+          offlineRegionDefinition: regionDefinitions[1],
+          downloadedId: null,
+          isDownloading: false,
+          name: regionNames[1],
+          estimatedTiles: 3580,
+        ),
+        OfflineRegionListItem(
+          offlineRegionDefinition: regionDefinitions[2],
+          downloadedId: null,
+          isDownloading: false,
+          name: regionNames[2],
+          estimatedTiles: 202,
+        ),
+      ];
 
   void _updateListOfRegions() async {
     List<OfflineRegion> offlineRegions = await getListOfRegions();
