@@ -31,13 +31,13 @@ final List<OfflineRegionDefinition> regionDefinitions = [
     bounds: santiagoBounds,
     minZoom: 10.0,
     maxZoom: 16.0,
-    mapStyleUrl: "https://demotiles.maplibre.org/style.json",
+    mapStyleUrl: "https://tegola.io/styles/hot-osm.json",
   ),
   OfflineRegionDefinition(
     bounds: aucklandBounds,
     minZoom: 13.0,
     maxZoom: 16.0,
-    mapStyleUrl: "https://demotiles.maplibre.org/style.json",
+    mapStyleUrl: "https://tegola.io/styles/hot-osm.json",
   ),
 ];
 
