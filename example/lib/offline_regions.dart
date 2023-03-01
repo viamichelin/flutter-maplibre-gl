@@ -25,7 +25,7 @@ final List<OfflineRegionDefinition> regionDefinitions = [
     bounds: hawaiiBounds,
     minZoom: 3.0,
     maxZoom: 8.0,
-    mapStyleUrl: "https://demotiles.maplibre.org/style.json",
+    mapStyleUrl: "https://tegola.io/styles/hot-osm.json",
   ),
   OfflineRegionDefinition(
     bounds: santiagoBounds,
