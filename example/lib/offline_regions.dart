@@ -70,7 +70,7 @@ class OfflineRegionBody extends StatefulWidget {
 
 class _OfflineRegionsBodyState extends State<OfflineRegionBody> {
   List<OfflineRegionListItem> _items = [];
-  TextEditingController urlInputController = TextEditingController();
+  TextEditingController urlInputController = TextEditingController(text: "https://demotiles.maplibre.org/style.json");
 
   @override
   void initState() {
@@ -146,25 +146,19 @@ class _OfflineRegionsBodyState extends State<OfflineRegionBody> {
           bounds: hawaiiBounds,
           minZoom: 3.0,
           maxZoom: 8.0,
-          mapStyleUrl: urlInputController.text.isEmpty
-              ? "https://demotiles.maplibre.org/style.json"
-              : urlInputController.text,
+          mapStyleUrl: urlInputController.text,
         ),
         OfflineRegionDefinition(
           bounds: santiagoBounds,
           minZoom: 10.0,
           maxZoom: 16.0,
-          mapStyleUrl: urlInputController.text.isEmpty
-              ? "https://demotiles.maplibre.org/style.json"
-              : urlInputController.text,
+          mapStyleUrl: urlInputController.text,
         ),
         OfflineRegionDefinition(
           bounds: aucklandBounds,
           minZoom: 13.0,
           maxZoom: 16.0,
-          mapStyleUrl: urlInputController.text.isEmpty
-              ? "https://demotiles.maplibre.org/style.json"
-              : urlInputController.text,
+          mapStyleUrl: urlInputController.text,
         ),
       ];
 
