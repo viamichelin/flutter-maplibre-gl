@@ -63,8 +63,12 @@ class VectorMapState extends State<VectorMap> {
       // https://www.nextpit.com/forum/561686/how-to-use-google-maps-secret-gestures
       tiltGesturesEnabled: false,
       onMapClick: null,
-      onMapCreated: (controller) {
-        onNextFrame(() => _mapReadyCompleter.complete(controller));
+      onMapCreated: (controller) async {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+
+          _mapReadyCompleter.complete(controller);
+        });
       },
       onStyleLoadedCallback: () async {
         // We are not using "completeOnce" here because we should never
@@ -225,21 +229,5 @@ class VectorMapState extends State<VectorMap> {
 
       _cachedImages.add(icon);
     }
-  }
-}
-
-extension OnNextFrameExtension<T extends StatefulWidget> on State<T> {
-  Future<void> onNextFrame(FutureOr<void> Function() method) {
-    final completer = Completer<void>();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-
-      try {
-        completer.complete(method());
-      } catch (e, stackTrace) {
-        completer.completeError(e, stackTrace);
-      }
-    });
-    return completer.future;
   }
 }
