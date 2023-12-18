@@ -19,13 +19,7 @@ class _MapsDemoState extends State<MapsDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: VectorMap(
-        key: _mapKey,
-        initialCameraPosition: const CameraPosition(
-          target: LatLng(50.834060793873505, 4.340443996254663),
-          zoom: 12,
-        ),
-      ),
+      body: VectorMap(key: _mapKey),
       floatingActionButton: FloatingActionButton(
         child: const Text("Ad.Ic"),
         onPressed: () async {
@@ -35,7 +29,6 @@ class _MapsDemoState extends State<MapsDemo> {
               identifier: "location_selected",
               iconPath: "assets/location_selected.png",
             ),
-            animateCamera: true,
           );
         },
       ),
