@@ -54,6 +54,8 @@ import 'package:maplibre_gl_web/src/ui/handler/touch_zoom_rotate.dart';
 class MapLibreMap extends Camera {
   final MapLibreMapJsImpl jsObject;
 
+  static bool didRemove = false;
+
   factory MapLibreMap(MapOptions options) =>
       MapLibreMap.fromJsObject(MapLibreMapJsImpl(options.jsObject));
 
@@ -495,8 +497,10 @@ class MapLibreMap extends Camera {
   ///    Forces a full update.
   ///  @returns {MapLibreMap} `this`
   ///  @see [Change a map's style](https://maplibre.org/maplibre-gl-js/docs/examples/setstyle/)
-  MapLibreMap setStyle(dynamic style, [dynamic options]) =>
-      MapLibreMap.fromJsObject(jsObject.setStyle(style));
+  MapLibreMap setStyle(dynamic style, [dynamic options]) {
+    print("setStyle internal!");
+    return MapLibreMap.fromJsObject(jsObject.setStyle(style));
+  }
 
   ///  Returns the map's MapLibre style object, which can be used to recreate the map's style.
   ///
@@ -504,7 +508,10 @@ class MapLibreMap extends Camera {
   ///
   ///  @example
   ///  var styleJson = map.getStyle();
-  dynamic getStyle() => jsObject.getStyle();
+  dynamic getStyle() {
+    print("getStyle internal");
+    return jsObject.getStyle();
+  }
 
   /// Return each layer of the  MapLibre style object, which can be used to check the order, toggle the visibility or change properties
   List<dynamic> getLayers() => Style.fromJsObject(jsObject.getStyle()).layers;
@@ -530,10 +537,27 @@ class MapLibreMap extends Camera {
   ///  @see GeoJSON source: [Add live realtime data](https://maplibre.org/maplibre-gl-js/docs/examples/live-geojson/)
   ///  @see Raster DEM source: [Add hillshading](https://maplibre.org/maplibre-gl-js/docs/examples/hillshade/)
   MapLibreMap addSource(String id, dynamic source) {
+    MapLibreMap result;
     if (source is Source) {
-      return MapLibreMap.fromJsObject(jsObject.addSource(id, source.jsObject));
+      result =
+          MapLibreMap.fromJsObject(jsObject.addSource(id, source.jsObject));
+    } else {
+      result = MapLibreMap.fromJsObject(jsObject.addSource(id, jsify(source)));
     }
-    return MapLibreMap.fromJsObject(jsObject.addSource(id, jsify(source)));
+
+    print("Adding source :$id -> $source");
+    _checkSourceExists(id);
+    return result;
+  }
+
+  Future<void> _checkSourceExists(String sourceId) async {
+    while (getSource(sourceId) != null) {
+      print("Source with id $sourceId exists...");
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+    }
+
+    didRemove = true;
+    print("Source with id $sourceId removed!");
   }
 
   ///  Returns a Boolean indicating whether the source is loaded.
@@ -567,7 +591,10 @@ class MapLibreMap extends Camera {
   ///  @returns {MapLibreMap} `this`
   ///  @example
   ///  map.removeSource('bathymetry-data');
-  removeSource(String id) => jsObject.removeSource(id);
+  removeSource(String id) {
+    print("removing source: $id");
+    jsObject.removeSource(id);
+  }
 
   ///  Returns the source with the specified ID in the map's style.
   ///
@@ -763,7 +790,10 @@ class MapLibreMap extends Camera {
   ///  @example
   ///  // If a layer with ID 'state-data' exists, remove it.
   ///  if (map.getLayer('state-data')) map.removeLayer('state-data');
-  removeLayer(String id) => jsObject.removeLayer(id);
+  removeLayer(String id) {
+    print("Removing layer: $id");
+    jsObject.removeLayer(id);
+  }
 
   ///  Returns the layer with the specified ID in the map's style.
   ///

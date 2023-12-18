@@ -19,6 +19,9 @@ class Event extends JsObjectWrapper<EventJsImpl> {
 
   LngLat get lngLat => LngLat.fromJsObject(jsObject.lngLat);
 
+  String? get dataType => jsObject.dataType;
+  String? get sourceDataType => jsObject.sourceDataType;
+
   List<Feature> get features =>
       jsObject.features.map((dynamic f) => Feature.fromJsObject(f)).toList();
 

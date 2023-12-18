@@ -6,9 +6,19 @@ Map<String, dynamic> buildFeatureCollection(
 }
 
 final _random = Random();
+
+final _ids = <String>{};
+
 String getRandomString([int length = 10]) {
   const charSet =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-  return String.fromCharCodes(Iterable.generate(
+  final randomString = String.fromCharCodes(Iterable.generate(
       length, (_) => charSet.codeUnitAt(_random.nextInt(charSet.length))));
+  if (_ids.contains(randomString)) {
+    print("DUPLICATE ID!!!!!!!");
+    return getRandomString();
+  }
+
+  _ids.add(randomString);
+  return randomString;
 }

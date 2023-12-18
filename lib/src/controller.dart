@@ -126,6 +126,7 @@ class MaplibreMapController extends ChangeNotifier {
     });
 
     _maplibreGlPlatform.onMapStyleLoadedPlatform.add((_) {
+      print("Setting up annotation managers.");
       final interactionEnabled = annotationConsumeTapEvents.toSet();
       for (var type in annotationOrder.toSet()) {
         final enableInteraction = interactionEnabled.contains(type);
@@ -149,6 +150,7 @@ class MaplibreMapController extends ChangeNotifier {
           default:
         }
       }
+      print("Done setting up annotation managers!");
       if (onStyleLoadedCallback != null) {
         onStyleLoadedCallback!();
       }
@@ -1309,6 +1311,7 @@ class MaplibreMapController extends ChangeNotifier {
           minzoom: minzoom,
           maxzoom: maxzoom);
     } else {
+      print("Shit");
       throw UnimplementedError("Unknown layer type $properties");
     }
   }

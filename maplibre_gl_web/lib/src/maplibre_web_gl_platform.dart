@@ -61,6 +61,7 @@ class MaplibreMapController extends MapLibreGlPlatform
 
   @override
   Future<void> initPlatform(int id) async {
+    _log("initPlatform");
     await _addStylesheetToShadowRoot(_mapElement);
     if (_creationParams.containsKey('initialCameraPosition')) {
       var camera = _creationParams['initialCameraPosition'];
@@ -77,6 +78,7 @@ class MaplibreMapController extends MapLibreGlPlatform
           attributionControl: false, //avoid duplicate control
         ),
       );
+      _map.on('data', _onData);
       _map.on('load', _onStyleLoaded);
       _map.on('click', _onMapClick);
       // long click not available in web, so it is mapped to double click
@@ -110,6 +112,8 @@ class MaplibreMapController extends MapLibreGlPlatform
   }
 
   void _loadFromAssets(Event event) async {
+    print("Style missing: $event");
+
     final imagePath = event.id;
     final ByteData bytes = await rootBundle.load(imagePath);
     await addImage(imagePath, bytes.buffer.asUint8List());
@@ -188,6 +192,8 @@ class MaplibreMapController extends MapLibreGlPlatform
   @override
   Future<CameraPosition?> updateMapOptions(
       Map<String, dynamic> optionsUpdate) async {
+    return null;
+    _log("updateMapOptions");
     // FIX: why is called indefinitely? (map_ui page)
     Convert.interpretMapLibreMapOptions(optionsUpdate, this);
     return _getCameraPosition();
@@ -196,6 +202,7 @@ class MaplibreMapController extends MapLibreGlPlatform
   @override
   Future<bool?> animateCamera(CameraUpdate cameraUpdate,
       {Duration? duration}) async {
+    _log("animateCamera");
     final cameraOptions = Convert.toCameraOptions(cameraUpdate, _map).jsObject;
 
     final around = getProperty(cameraOptions, 'around');
@@ -218,6 +225,7 @@ class MaplibreMapController extends MapLibreGlPlatform
 
   @override
   Future<bool?> moveCamera(CameraUpdate cameraUpdate) async {
+    _log("moveCamera");
     final cameraOptions = Convert.toCameraOptions(cameraUpdate, _map);
     _map.jumpTo(cameraOptions);
     return true;
@@ -226,6 +234,7 @@ class MaplibreMapController extends MapLibreGlPlatform
   @override
   Future<void> updateMyLocationTrackingMode(
       MyLocationTrackingMode myLocationTrackingMode) async {
+    _log("updateMyLocationTrackingMode");
     setMyLocationTrackingMode(myLocationTrackingMode.index);
   }
 
@@ -233,11 +242,13 @@ class MaplibreMapController extends MapLibreGlPlatform
   Future<void> matchMapLanguageWithDeviceDefault() async {
     // Fix in https://github.com/maplibre/flutter-maplibre-gl/issues/263
     // ignore: deprecated_member_use
+    _log("matchMapLanguageWithDeviceDefault");
     setMapLanguage(ui.window.locale.languageCode);
   }
 
   @override
   Future<void> setMapLanguage(String language) async {
+    _log("setMapLanguage");
     final layers = _map.getLayers();
 
     final languageRegex = RegExp("(name:[a-z]+)");
@@ -282,6 +293,7 @@ class MaplibreMapController extends MapLibreGlPlatform
   @override
   Future<List> queryRenderedFeatures(
       Point<double> point, List<String> layerIds, List<Object>? filter) async {
+    print('queryRenderedFeatures');
     Map<String, dynamic> options = {};
     if (layerIds.length > 0) {
       options['layers'] = layerIds;
@@ -310,6 +322,7 @@ class MaplibreMapController extends MapLibreGlPlatform
   @override
   Future<List> queryRenderedFeaturesInRect(
       Rect rect, List<String> layerIds, String? filter) async {
+    print('queryRenderedFeaturesInRect');
     Map<String, dynamic> options = {};
     if (layerIds.length > 0) {
       options['layers'] = layerIds;
@@ -339,6 +352,7 @@ class MaplibreMapController extends MapLibreGlPlatform
   Future<List> querySourceFeatures(
       String sourceId, String? sourceLayerId, List<Object>? filter) async {
     Map<String, dynamic> parameters = {};
+    print('querySourceFeatures');
 
     if (sourceLayerId != null) {
       parameters['sourceLayer'] = sourceLayerId;
@@ -376,6 +390,7 @@ class MaplibreMapController extends MapLibreGlPlatform
 
   @override
   Future<LatLngBounds> getVisibleRegion() async {
+    print('getVisibleRegion');
     final bounds = _map.getBounds();
     return LatLngBounds(
       southwest: LatLng(
@@ -392,6 +407,7 @@ class MaplibreMapController extends MapLibreGlPlatform
   @override
   Future<void> addImage(String name, Uint8List bytes,
       [bool sdf = false]) async {
+    print('addImage');
     final photo = decodeImage(bytes)!;
     if (!_map.hasImage(name)) {
       _map.addImage(
@@ -408,6 +424,9 @@ class MaplibreMapController extends MapLibreGlPlatform
 
   @override
   Future<void> removeSource(String sourceId) async {
+    print('removeSource: $sourceId');
+    print(StackTrace.current);
+    debugger();
     _map.removeSource(sourceId);
   }
 
@@ -424,9 +443,18 @@ class MaplibreMapController extends MapLibreGlPlatform
     return null;
   }
 
+  void _onData(Event e) {
+    print("Data event. ${e.type} ${e.sourceDataType ?? ""}");
+    if (e.sourceDataType == "metadata" && e.dataType == "source") {
+      print("StackTrace\n${StackTrace.current}");
+    }
+  }
+
   void _onStyleLoaded(_) {
+    print("Web, _onStyleLoaded");
     _mapReady = true;
     _onMapResize();
+    print("Resized");
     onMapStyleLoadedPlatform(null);
   }
 
@@ -545,6 +573,7 @@ class MaplibreMapController extends MapLibreGlPlatform
     bool? compassEnabled,
     CompassViewPosition? position,
   }) {
+    print('_updateNavigationControl: $compassEnabled, $position');
     bool? prevShowCompass;
     if (_navigationControl != null) {
       prevShowCompass = _navigationControl!.options.showCompass;
@@ -635,6 +664,8 @@ class MaplibreMapController extends MapLibreGlPlatform
 
   @override
   void setCameraTargetBounds(LatLngBounds? bounds) {
+    return;
+    print('setCameraTargetBounds: $bounds');
     if (bounds == null) {
       _map.setMaxBounds(null);
     } else {
@@ -680,6 +711,7 @@ class MaplibreMapController extends MapLibreGlPlatform
 
   @override
   void setMinMaxZoomPreference(num? min, num? max) {
+    _log("setMinMaxZoomPreference");
     // FIX: why is called indefinitely? (map_ui page)
     _map.setMinZoom(min);
     _map.setMaxZoom(max);
@@ -715,6 +747,7 @@ class MaplibreMapController extends MapLibreGlPlatform
 
   @override
   void setStyleString(String? styleString) {
+    _log("SetStyleString!");
     //remove old mouseenter callbacks to avoid multicalling
     for (var layerId in _interactiveFeatureLayerIds) {
       _map.off('mouseenter', layerId, _onMouseEnterFeature);
@@ -772,25 +805,34 @@ class MaplibreMapController extends MapLibreGlPlatform
 
   @override
   Future<void> removeLayer(String layerId) async {
+    _log("removeLayer: $layerId");
     _interactiveFeatureLayerIds.remove(layerId);
     _map.removeLayer(layerId);
   }
 
   @override
   Future<void> setFilter(String layerId, dynamic filter) async {
+    _log("setFilter: $layerId");
     _map.setFilter(layerId, filter);
   }
 
   @override
   Future<void> addGeoJsonSource(String sourceId, Map<String, dynamic> geojson,
       {String? promoteId}) async {
+    _log("addGeoJsonSource: $sourceId");
     final data = _makeFeatureCollection(geojson);
     _addedFeaturesByLayer[sourceId] = data;
-    _map.addSource(sourceId, {
-      "type": 'geojson',
-      "data": geojson, // pass the raw string here to avoid errors
-      if (promoteId != null) "promoteId": promoteId
-    });
+    try {
+      _map.addSource(sourceId, {
+        "type": 'geojson',
+        "data": geojson, // pass the raw string here to avoid errors
+        if (promoteId != null) "promoteId": promoteId
+      });
+    } catch (e) {
+      print("Add geojson source failed $e");
+    }
+
+    print("Succesfully added geoJsonSource: $sourceId");
   }
 
   Feature _makeFeature(Map<String, dynamic> geojsonFeature) {
@@ -810,10 +852,22 @@ class MaplibreMapController extends MapLibreGlPlatform
   @override
   Future<void> setGeoJsonSource(
       String sourceId, Map<String, dynamic> geojson) async {
-    final source = _map.getSource(sourceId) as GeoJsonSource;
-    final data = _makeFeatureCollection(geojson);
-    _addedFeaturesByLayer[sourceId] = data;
-    source.setData(data);
+    _log("setGeoJsonSource $sourceId, $geojson");
+    print("Amount of layers: ${_map.getLayers().length}");
+    try {
+      final source = _map.getSource(sourceId) as GeoJsonSource?;
+      if (source == null) {
+        print("Source isn null");
+        return;
+      }
+
+      final data = _makeFeatureCollection(geojson);
+      _addedFeaturesByLayer[sourceId] = data;
+      source.setData(data);
+    } catch (e, stack) {
+      print("Something went wrong during geo json: $e");
+      debugPrintStack(stackTrace: stack);
+    }
   }
 
   Future setCameraBounds({
@@ -883,6 +937,7 @@ class MaplibreMapController extends MapLibreGlPlatform
 
   Future<void> setLayerProperties(
       String layerId, Map<String, dynamic> properties) async {
+    _log("setLayerProperties: $layerId");
     for (final entry in properties.entries) {
       // Very hacky: because we don't know if the property is a layout
       // or paint property, we try to set it as both.
@@ -955,6 +1010,7 @@ class MaplibreMapController extends MapLibreGlPlatform
       double? maxzoom,
       dynamic filter,
       required bool enableInteraction}) async {
+    _log("_addLayer ($layerType) $sourceId, $layerId");
     final layout = Map.fromEntries(
         properties.entries.where((entry) => isLayoutProperty(entry.key)));
     final paint = Map.fromEntries(
@@ -1050,6 +1106,7 @@ class MaplibreMapController extends MapLibreGlPlatform
 
   @override
   Future<void> addSource(String sourceId, SourceProperties source) async {
+    _log("addSource: $sourceId");
     _map.addSource(sourceId, source.toJson());
   }
 
@@ -1088,6 +1145,7 @@ class MaplibreMapController extends MapLibreGlPlatform
   @override
   Future<void> setFeatureForGeoJsonSource(
       String sourceId, Map<String, dynamic> geojsonFeature) async {
+    _log("setFeatureForGeoJsonSource: $sourceId");
     final source = _map.getSource(sourceId) as GeoJsonSource?;
     final data = _addedFeaturesByLayer[sourceId];
 
@@ -1107,31 +1165,41 @@ class MaplibreMapController extends MapLibreGlPlatform
 
   @override
   void resizeWebMap() {
+    _log("resizeWebMap");
     _onMapResize();
   }
 
   @override
   void forceResizeWebMap() {
+    _log("forceResizeWebMap");
     _map.resize();
   }
 
   @override
   Future<void> setLayerVisibility(String layerId, bool visible) async {
+    _log("setLayerVisibility");
     _map.setLayoutProperty(layerId, 'visibility', visible ? 'visible' : 'none');
   }
 
   @override
   Future getFilter(String layerId) async {
+    _log("getFilter");
     return _map.getFilter(layerId);
   }
 
   @override
   Future<List> getLayerIds() async {
+    _log("getLayerIds");
     return _map.getLayers().map((e) => e.id).toList();
   }
 
   @override
   Future<List> getSourceIds() async {
+    _log("getSourceIds");
     throw UnimplementedError();
+  }
+
+  void _log(String message) {
+    print(message);
   }
 }

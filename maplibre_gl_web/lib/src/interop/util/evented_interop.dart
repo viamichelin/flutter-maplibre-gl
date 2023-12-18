@@ -17,6 +17,8 @@ abstract class EventJsImpl {
   external LngLatJsImpl get lngLat;
   external List<FeatureJsImpl> get features;
   external PointJsImpl get point;
+  external String? get dataType;
+  external String? get sourceDataType;
 
   external factory EventJsImpl({
     String? id,

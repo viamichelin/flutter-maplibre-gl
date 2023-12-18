@@ -29,15 +29,30 @@ abstract class AnnotationManager<T extends Annotation> {
 
   Set<T> get annotations => _idToAnnotation.values.toSet();
 
-  AnnotationManager(this.controller,
-      {this.onTap, this.selectLayer, required this.enableInteraction})
-      : id = getRandomString() {
+  AnnotationManager(
+    this.controller, {
+    this.onTap,
+    this.selectLayer,
+    required this.enableInteraction,
+  }) : id = getRandomString() {
+    print("Initializing ${this.runtimeType}($id)");
+
     for (var i = 0; i < allLayerProperties.length; i++) {
       final layerId = _makeLayerId(i);
-      controller.addGeoJsonSource(layerId, buildFeatureCollection([]),
-          promoteId: "id");
+      controller.addGeoJsonSource(
+        layerId,
+        buildFeatureCollection([]),
+        promoteId: "id",
+      );
       controller.addLayer(layerId, layerId, allLayerProperties[i]);
+      print("----Added $layerId -> ${allLayerProperties[i]}]");
     }
+    controller.querySourceFeatures(
+      _makeLayerId(0),
+      null,
+      [],
+    ).then((value) => print("Query result: $value"));
+    print("Init done!");
 
     if (onTap != null) {
       controller.onFeatureTapped.add(_onFeatureTapped);
@@ -65,7 +80,9 @@ abstract class AnnotationManager<T extends Annotation> {
   String _makeLayerId(int layerIndex) => "${id}_$layerIndex";
 
   Future<void> _setAll() async {
+    print("Calling setAll");
     if (selectLayer != null) {
+      print("selectLayer != null");
       final featureBuckets = [for (final _ in allLayerProperties) <T>[]];
 
       for (final annotation in _idToAnnotation.values) {
@@ -81,6 +98,7 @@ abstract class AnnotationManager<T extends Annotation> {
                 [for (final l in featureBuckets[i]) l.toGeoJson()]));
       }
     } else {
+      print("selectLayer == null");
       await controller.setGeoJsonSource(
           _makeLayerId(0),
           buildFeatureCollection(
@@ -99,6 +117,7 @@ abstract class AnnotationManager<T extends Annotation> {
 
   /// add a single annotation to the map
   Future<void> add(T annotation) async {
+    print("Adding $annotation to ${this.runtimeType} ($id)");
     _idToAnnotation[annotation.id] = annotation;
     await _setAll();
   }
@@ -186,6 +205,7 @@ class LineManager extends AnnotationManager<Line> {
     lineOffset: [Expressions.get, 'lineOffset'],
     lineBlur: [Expressions.get, 'lineBlur'],
   );
+
   @override
   List<LayerProperties> get allLayerProperties => [
         _baseProperties,
@@ -205,6 +225,7 @@ class FillManager extends AnnotationManager<Fill> {
           enableInteraction: enableInteraction,
           selectLayer: (Fill fill) => fill.options.fillPattern == null ? 0 : 1,
         );
+
   @override
   List<LayerProperties> get allLayerProperties => const [
         FillLayerProperties(
@@ -231,6 +252,7 @@ class CircleManager extends AnnotationManager<Circle> {
           enableInteraction: enableInteraction,
           onTap: onTap,
         );
+
   @override
   List<LayerProperties> get allLayerProperties => const [
         CircleLayerProperties(
