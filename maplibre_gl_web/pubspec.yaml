@@ -19,9 +19,9 @@ dependencies:
   meta: ^1.3.0
   maplibre_gl_platform_interface:
     git:
-      url: https://github.com/maplibre/flutter-maplibre-gl.git
+      url: https://github.com/viamichelin/flutter-maplibre-gl.git
       path: maplibre_gl_platform_interface
-      ref: main
+      ref: 6f34e484c103c86d83b23368546eda4221936d88
   image: ^4.0.17
 
 dependency_overrides:
