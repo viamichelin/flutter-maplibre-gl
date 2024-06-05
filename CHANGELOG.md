@@ -20,7 +20,7 @@ If you notice any build errors, please make sure to run `flutter clean`.
   for more information.
 * Renamed the method channel to `plugins.flutter.io/maplibre_gl_*` in all
   packages.
-* Renamed "Maplibre" to "MapLibre" to be in line with maplibre-native 
+* Renamed "Maplibre" to "MapLibre" to be in line with maplibre-native
   (affects for example the classes `MaplibreMap` and `MaplibreMapController`).
 
 ### Changes
@@ -70,7 +70,7 @@ use the `maplibre_gl` package directly from pub.dev from now on. Check the
 
 ## 0.18.0
 
-### Breaking Change:
+### Breaking Change
 
 Already since 0.17.0, developers do not need to adapt their Podfile for iOS apps
 anymore as it was previously described in the Readme. Developers who previously
@@ -79,7 +79,7 @@ build failure on iOS. (This change actually already landed in 0.17.0, but it may
 not have been sufficiently clear that not removing these lines might break
 builds).
 
-### Other Changes:
+### Other Changes
 
 * new feature: set arbitrary layer properties by @m0nac0
   in [#303](https://github.com/maplibre/flutter-maplibre-gl/pull/303)
@@ -106,7 +106,7 @@ builds).
   previously described in the
   Readme. [#278](https://github.com/maplibre/flutter-maplibre-gl/pull/278)
 
-### Breaking Change:
+### Breaking Change
 
 * `maplibre_gl/mapbox_gl.dart` was renamed to `maplibre_gl/maplibre_gl.dart`.
   You can do a replace-all from `import 'package:maplibre_gl/mapbox_gl.dart';`
@@ -219,7 +219,7 @@ at the end for a full changelog.
   in [#304](https://github.com/maplibre/flutter-maplibre-gl/pull/304)
 
 **Full Changelog**:
-https://github.com/maplibre/flutter-maplibre-gl/compare/0.16.0...0.17.0
+<https://github.com/maplibre/flutter-maplibre-gl/compare/0.16.0...0.17.0>
 
 ## 0.16.0, Jun 28, 2022
 
@@ -258,19 +258,19 @@ https://github.com/maplibre/flutter-maplibre-gl/compare/0.16.0...0.17.0
 
 ## 0.14.0
 
-### Breaking changes:
+### Breaking changes
 
 * Remove access token, update libraries, replace example
   styles [#25](https://github.com/m0nac0/flutter-maplibre-gl/pull/25) (also
   see [#21](https://github.com/m0nac0/flutter-maplibre-gl/issues/21))
-    * The parameter `accessToken` of class `MaplibreMap` was removed. If you
+  * The parameter `accessToken` of class `MaplibreMap` was removed. If you
       want to continue using a tile provider that requires an API key, specify
       that key directly in the URL of the tile source (
       see [https://github.com/m0nac0/flutter-maplibre-gl#tile-sources-requiring-an-api-key](https://github.com/m0nac0/flutter-maplibre-gl#tile-sources-requiring-an-api-key))
-    * The built-in constants for specific styles were also removed. You can
+  * The built-in constants for specific styles were also removed. You can
       continue using these styles by using the styles' URL
 
-### Other changes:
+### Other changes
 
 * Remove warning about missing access token on
   Android [#22](https://github.com/m0nac0/flutter-maplibre-gl/pull/22)
@@ -337,7 +337,7 @@ Further improvements:
 * Remove failed offline region
   downloads [#583](https://github.com/tobrun/flutter-mapbox-gl/pull/583)
 
-## Below is the original changelog of the tobrun/flutter-mapbox-gl project, before the fork.
+## Below is the original changelog of the tobrun/flutter-mapbox-gl project, before the fork
 
 ## 0.10.0, February 12, 2020
 
@@ -415,19 +415,19 @@ Further improvements:
 
 ## 0.8.0, August 22, 2020
 
-- implementation of feature
+* implementation of feature
   querying [#177](https://github.com/tobrun/flutter-mapbox-gl/pull/177)
-- Batch create/delete of
+* Batch create/delete of
   symbols [#279](https://github.com/tobrun/flutter-mapbox-gl/pull/279)
-- Add multi map
+* Add multi map
   support [#315](https://github.com/tobrun/flutter-mapbox-gl/pull/315)
-- Fix OnCameraIdle not being
+* Fix OnCameraIdle not being
   invoked [#313](https://github.com/tobrun/flutter-mapbox-gl/pull/313)
-- Fix android zIndex symbol
+* Fix android zIndex symbol
   option [#312](https://github.com/tobrun/flutter-mapbox-gl/pull/312)
-- Set dependencies from
+* Set dependencies from
   git [#319](https://github.com/tobrun/flutter-mapbox-gl/pull/319)
-- Add line#getGeometry and
+* Add line#getGeometry and
   symbol#getGeometry [#281](https://github.com/tobrun/flutter-mapbox-gl/pull/281)
 
 ## 0.7.0, June 6, 2020
