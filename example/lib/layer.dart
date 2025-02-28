@@ -145,10 +145,11 @@ class LayerState extends State {
     controller.onFeatureTapped.add(onFeatureTap);
   }
 
-  void onFeatureTap(dynamic featureId, Point<double> point, LatLng latLng) {
+  void onFeatureTap(
+      dynamic featureId, Point<double> point, LatLng latLng, String layerId) {
     final snackBar = SnackBar(
       content: Text(
-        'Tapped feature with id $featureId',
+        'Tapped feature with id $featureId on layer $layerId',
         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       backgroundColor: Theme.of(context).primaryColor,
@@ -157,7 +158,7 @@ class LayerState extends State {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  void _onStyleLoadedCallback() async {
+  Future<void> _onStyleLoadedCallback() async {
     await addImageFromAsset(
         controller, "custom-marker", "assets/symbols/custom-marker.png");
     await controller.addGeoJsonSource("points", _points);

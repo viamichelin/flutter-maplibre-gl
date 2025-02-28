@@ -17,10 +17,6 @@ abstract class MapLibrePlatform {
   static MapLibrePlatform Function() createInstance =
       () => _instance ?? MapLibreMethodChannel();
 
-  static set instance(MapLibreMethodChannel instance) {
-    _instance = instance;
-  }
-
   final onInfoWindowTappedPlatform = ArgumentCallbacks<String>();
 
   final onFeatureTappedPlatform = ArgumentCallbacks<Map<String, dynamic>>();
@@ -78,6 +74,7 @@ abstract class MapLibrePlatform {
   Future<List> querySourceFeatures(
       String sourceId, String? sourceLayerId, List<Object>? filter);
   Future invalidateAmbientCache();
+  Future clearAmbientCache();
   Future<LatLng?> requestMyLocationLatLng();
 
   Future<LatLngBounds> getVisibleRegion();
