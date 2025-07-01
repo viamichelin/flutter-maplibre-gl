@@ -220,6 +220,11 @@ class MapLibreMapController extends ChangeNotifier {
   /// The returned set will be a detached snapshot of the symbols collection.
   Set<Symbol> get symbols => symbolManager!.annotations;
 
+  /// The platform that this map is running on.
+  ///
+  /// We need this to access platform specific methods
+  MapLibrePlatform get platform => _maplibrePlatform;
+
   /// Callbacks to receive tap events for lines placed on this map.
   final ArgumentCallbacks<Line> onLineTapped = ArgumentCallbacks<Line>();
 
