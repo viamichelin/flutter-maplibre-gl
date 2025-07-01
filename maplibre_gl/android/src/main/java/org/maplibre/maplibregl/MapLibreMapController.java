@@ -1247,7 +1247,10 @@ final class MapLibreMapController
       case "locationComponent#getLastLocation":
         {
           Log.e(TAG, "location component: getLastLocation");
-          if (this.myLocationEnabled && locationComponent != null) {
+          if (this.myLocationEnabled
+              && locationComponent != null
+              && locationComponent.isLocationComponentActivated()
+              && locationComponent.getLocationEngine() != null) {
             Map<String, Object> reply = new HashMap<>();
 
             mapLibreMap.getLocationComponent().getLocationEngine().getLastLocation(
@@ -1270,6 +1273,11 @@ final class MapLibreMapController
                     result.error("", "", null); // ???
                   }
                 });
+          } else {
+            result.error(
+                "LOCATION DISABLED",
+                "Location is disabled or location component is unavailable",
+                null);
           }
           break;
         }
@@ -1795,14 +1803,17 @@ final class MapLibreMapController
     if (mapView == null) {
       return;
     }
-    
+
     if (locationComponent != null) {
       locationComponent.setLocationComponentEnabled(false);
     }
     stopListeningForLocationUpdates();
+
     mapViewContainer.removeView(mapView);
+
     mapView.onStop();
     mapView.onDestroy();
+
     mapView = null;
   }
 
@@ -2033,11 +2044,8 @@ final class MapLibreMapController
   }
 
   private void updateMyLocationEnabled() {
-    if (this.locationComponent == null && myLocationEnabled) {
-      Style style = mapLibreMap.getStyle();
-      if(style != null) {
-        enableLocationComponent(style);
-      }
+    if (this.locationComponent == null && mapLibreMap.getStyle() != null && myLocationEnabled) {
+      enableLocationComponent(mapLibreMap.getStyle());
     }
 
     if (myLocationEnabled) {
@@ -2054,6 +2062,7 @@ final class MapLibreMapController
   private void startListeningForLocationUpdates() {
     if (locationEngineCallback == null
         && locationComponent != null
+        && locationComponent.isLocationComponentActivated()
         && locationComponent.getLocationEngine() != null) {
       locationEngineCallback =
           new LocationEngineCallback<LocationEngineResult>() {
@@ -2075,6 +2084,7 @@ final class MapLibreMapController
   private void stopListeningForLocationUpdates() {
     if (locationEngineCallback != null
         && locationComponent != null
+        && locationComponent.isLocationComponentActivated()
         && locationComponent.getLocationEngine() != null) {
       locationComponent.getLocationEngine().removeLocationUpdates(locationEngineCallback);
       locationEngineCallback = null;
