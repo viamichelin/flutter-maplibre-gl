@@ -262,6 +262,13 @@ class MapLibreMapController extends ChangeNotifier {
         circleManager?.byId(formattedId);
   }
 
+  /// !!! IMPORTANT !!! Only use platform if you are sure to need it.
+  /// This shouldn't be exposed to the public API, but we need it to overcome some limitations of the current implementation.
+  /// For example, there is no other way to update the onMapClick callback after the map is created.
+  ///
+  /// This is a low level access to the platform implementation. Every communication with native code is done through this object.
+  MapLibrePlatform get platform => _maplibrePlatform;
+
   FillManager? fillManager;
   LineManager? lineManager;
   CircleManager? circleManager;
