@@ -277,6 +277,9 @@ class _MapLibreMapState extends State<MapLibreMap> {
       'styleString': widget.styleString,
       'options': _MapLibreMapOptions.fromWidget(widget).toMap(),
       'dragEnabled': widget.dragEnabled,
+      // Hybrid Composition needs a SurfaceView (textureMode=false); Virtual
+      // Display needs a TextureView (true).
+      'textureMode': !MapLibreMap.useHybridComposition,
       if (widget.iosLongClickDuration != null)
         'iosLongClickDurationMilliseconds':
             widget.iosLongClickDuration!.inMilliseconds,
