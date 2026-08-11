@@ -56,6 +56,11 @@ class MapLibreMapBuilder implements MapLibreMapOptionsSink {
     options.camera(position);
   }
 
+  // false = SurfaceView (needed for Hybrid Composition), true = TextureView.
+  public void setTextureMode(boolean textureMode) {
+    options.textureMode(textureMode);
+  }
+
   @Override
   public void setCompassEnabled(boolean compassEnabled) {
     options.compassEnabled(compassEnabled);

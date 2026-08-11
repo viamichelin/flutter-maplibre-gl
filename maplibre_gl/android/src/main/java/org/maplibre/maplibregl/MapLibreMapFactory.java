@@ -38,6 +38,10 @@ public class MapLibreMapFactory extends PlatformViewFactory {
       boolean dragEnabled = Convert.toBoolean(params.get("dragEnabled"));
       builder.setDragEnabled(dragEnabled);
     }
+    if (params.containsKey("textureMode")) {
+      boolean textureMode = Convert.toBoolean(params.get("textureMode"));
+      builder.setTextureMode(textureMode);
+    }
     if(params.containsKey("styleString")) {
       String styleString = Convert.toString(params.get("styleString"));
       builder.setStyleString(styleString);
