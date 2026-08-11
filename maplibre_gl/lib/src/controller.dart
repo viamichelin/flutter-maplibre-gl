@@ -178,13 +178,6 @@ class MapLibreMapController extends ChangeNotifier {
     });
   }
 
-  /// !!! IMPORTANT !!! Only use platform if you are sure to need it.
-  /// This shouldn't be exposed to the public API, but we need it to overcome some limitations of the current implementation.
-  /// For exemple, there is no other way to update the onMapClick callback after the map is created.
-  ///
-  /// This is a low level access to the platform implementation. Every communication with native code is done through this object.
-  MapLibrePlatform get platform => _maplibrePlatform;
-
   FillManager? fillManager;
   LineManager? lineManager;
   CircleManager? circleManager;
@@ -226,6 +219,11 @@ class MapLibreMapController extends ChangeNotifier {
   ///
   /// The returned set will be a detached snapshot of the symbols collection.
   Set<Symbol> get symbols => symbolManager!.annotations;
+
+  /// The platform that this map is running on.
+  ///
+  /// We need this to access platform specific methods
+  MapLibrePlatform get platform => _maplibrePlatform;
 
   /// Callbacks to receive tap events for lines placed on this map.
   final ArgumentCallbacks<Line> onLineTapped = ArgumentCallbacks<Line>();
@@ -1335,7 +1333,7 @@ class MapLibreMapController extends ChangeNotifier {
       double? maxzoom,
       dynamic filter}) async {
     if (properties is FillLayerProperties) {
-      addFillLayer(sourceId, layerId, properties,
+      await addFillLayer(sourceId, layerId, properties,
           belowLayerId: belowLayerId,
           enableInteraction: enableInteraction,
           sourceLayer: sourceLayer,
@@ -1343,13 +1341,13 @@ class MapLibreMapController extends ChangeNotifier {
           maxzoom: maxzoom,
           filter: filter);
     } else if (properties is FillExtrusionLayerProperties) {
-      addFillExtrusionLayer(sourceId, layerId, properties,
+      await addFillExtrusionLayer(sourceId, layerId, properties,
           belowLayerId: belowLayerId,
           sourceLayer: sourceLayer,
           minzoom: minzoom,
           maxzoom: maxzoom);
     } else if (properties is LineLayerProperties) {
-      addLineLayer(sourceId, layerId, properties,
+      await addLineLayer(sourceId, layerId, properties,
           belowLayerId: belowLayerId,
           enableInteraction: enableInteraction,
           sourceLayer: sourceLayer,
@@ -1357,7 +1355,7 @@ class MapLibreMapController extends ChangeNotifier {
           maxzoom: maxzoom,
           filter: filter);
     } else if (properties is SymbolLayerProperties) {
-      addSymbolLayer(sourceId, layerId, properties,
+      await addSymbolLayer(sourceId, layerId, properties,
           belowLayerId: belowLayerId,
           enableInteraction: enableInteraction,
           sourceLayer: sourceLayer,
@@ -1365,7 +1363,7 @@ class MapLibreMapController extends ChangeNotifier {
           maxzoom: maxzoom,
           filter: filter);
     } else if (properties is CircleLayerProperties) {
-      addCircleLayer(sourceId, layerId, properties,
+      await addCircleLayer(sourceId, layerId, properties,
           belowLayerId: belowLayerId,
           enableInteraction: enableInteraction,
           sourceLayer: sourceLayer,
@@ -1376,7 +1374,7 @@ class MapLibreMapController extends ChangeNotifier {
       if (filter != null) {
         throw UnimplementedError("RasterLayer does not support filter");
       }
-      addRasterLayer(sourceId, layerId, properties,
+      await addRasterLayer(sourceId, layerId, properties,
           belowLayerId: belowLayerId,
           sourceLayer: sourceLayer,
           minzoom: minzoom,
@@ -1385,13 +1383,13 @@ class MapLibreMapController extends ChangeNotifier {
       if (filter != null) {
         throw UnimplementedError("HillShadeLayer does not support filter");
       }
-      addHillshadeLayer(sourceId, layerId, properties,
+      await addHillshadeLayer(sourceId, layerId, properties,
           belowLayerId: belowLayerId,
           sourceLayer: sourceLayer,
           minzoom: minzoom,
           maxzoom: maxzoom);
     } else if (properties is HeatmapLayerProperties) {
-      addHeatmapLayer(sourceId, layerId, properties,
+      await addHeatmapLayer(sourceId, layerId, properties,
           belowLayerId: belowLayerId,
           sourceLayer: sourceLayer,
           minzoom: minzoom,

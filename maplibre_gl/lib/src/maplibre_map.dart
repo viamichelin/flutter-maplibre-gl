@@ -41,6 +41,7 @@ class MapLibreMap extends StatefulWidget {
     this.attributionButtonPosition = AttributionButtonPosition.bottomRight,
     this.attributionButtonMargins,
     this.iosLongClickDuration,
+    this.webPreserveDrawingBuffer = false,
     this.onMapClick,
     this.onUserLocationUpdated,
     this.onMapLongClick,
@@ -99,6 +100,11 @@ class MapLibreMap extends StatefulWidget {
   /// Has no effect on web or Android. Can not be changed at runtime, only the initial value is used.
   /// If null, the default value of the native MapLibre library / of the OS is used.
   final Duration? iosLongClickDuration;
+
+  /// If true, the map's canvas can be exported to a PNG using map.getCanvas().toDataURL().
+  /// This is false by default as a performance optimization.
+  /// **Web only** - has no effect on other platforms.
+  final bool? webPreserveDrawingBuffer;
 
   /// True if the map should show a compass when rotated.
   final bool compassEnabled;
@@ -271,9 +277,14 @@ class _MapLibreMapState extends State<MapLibreMap> {
       'styleString': widget.styleString,
       'options': _MapLibreMapOptions.fromWidget(widget).toMap(),
       'dragEnabled': widget.dragEnabled,
+      // Hybrid Composition needs a SurfaceView (textureMode=false); Virtual
+      // Display needs a TextureView (true).
+      'textureMode': !MapLibreMap.useHybridComposition,
       if (widget.iosLongClickDuration != null)
         'iosLongClickDurationMilliseconds':
             widget.iosLongClickDuration!.inMilliseconds,
+      if (widget.webPreserveDrawingBuffer != null)
+        'webPreserveDrawingBuffer': widget.webPreserveDrawingBuffer,
     };
     return _maplibrePlatform.buildView(
         creationParams, onPlatformViewCreated, widget.gestureRecognizers);
