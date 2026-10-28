@@ -6,21 +6,20 @@ import PackageDescription
 let package = Package(
     name: "maplibre_gl",
     platforms: [
-        .iOS("13.0"),
+        .iOS("16.0"),
     ],
     products: [
         .library(name: "maplibre-gl", targets: ["maplibre_gl"])
     ],
     dependencies: [
-        // When updating the dependency version,
-        // make sure to also update the version in maplibre_gl.podspec.
-        .package(url: "https://github.com/maplibre/maplibre-gl-native-distribution.git", exact: "6.28.0"),
+        // Reuse MichelinNavigation's bundled MapLibre; keep in sync with viamichelin_navigation_ios.
+        .package(url: "https://gitlab-dcadcx.michelin.net/mapping/mobile/ios-spm-mf-navigation-sdk.git", from: "6.3.3"),
     ],
     targets: [
         .target(
             name: "maplibre_gl",
             dependencies: [
-                .product(name: "MapLibre", package: "maplibre-gl-native-distribution")
+                .product(name: "MichelinNavigation", package: "ios-spm-mf-navigation-sdk")
             ]
         )
     ]
